@@ -1,0 +1,72 @@
+{
+   "score": 0,
+   "questionBookmark": 0,
+   "allQuestions": [
+      {
+         "question": "Prior to Tom Holland taking the role, how many actors have played Spider-Man on the big screen in the U.S.?",
+         "choices": [
+            "3",
+            "1",
+            "2",
+            "4"
+         ],
+         "correctAnswer": 2,
+         "chosenAns": null
+      },
+      {
+         "question": "What movie did Thanos first appear in?",
+         "choices": [
+            "iron man 3",
+            "guardians of the galaxy vol. 1",
+            "The Avengers",
+            "Aquaman"
+         ],
+         "correctAnswer": 2,
+         "chosenAns": null
+      },
+      {
+         "question": "Aside from Stan Lee, which actor has appeared in the most MCU films?",
+         "choices": [
+            "Robert Downey Jr.",
+            "Chris Evans",
+            "Scarlett Johansson",
+            "Samuel L. Jackson"
+         ],
+         "correctAnswer": 0,
+         "chosenAns": null
+      },
+      {
+         "question": "In Guardians of the Galaxy, what is the name of the dog in the Collector Taneleer Tivan's museum?",
+         "choices": [
+            "Bevo",
+            "Charlie",
+            "Wattson",
+            "Cosmo The SpaceDog"
+         ],
+         "correctAnswer": 3,
+         "chosenAns": null
+      },
+      {
+         "question": "How many versions of the Iron Man armor has Tony Stark made?",
+         "choices": [
+            "5",
+            "50",
+            "2",
+            "25"
+         ],
+         "correctAnswer": 1,
+         "chosenAns": null
+      },
+      {
+         "question": "How many Infinity Stones are there in the MCU and what color are they?",
+         "choices": [
+            "6",
+            "4",
+            "7",
+            "10"
+         ],
+         "correctAnswer": 0,
+         "chosenAns": null
+      }
+   ]
+}
