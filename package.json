@@ -4,7 +4,9 @@
   "description": "quiz with marvel trivia",
   "main": "App.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build index.html --public-url /marvel-quiz/",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
@@ -16,5 +18,11 @@
   "bugs": {
     "url": "https://github.com/OscarRobertRodriguez/marvel-quiz/issues"
   },
-  "homepage": "https://github.com/OscarRobertRodriguez/marvel-quiz#readme"
+  "homepage": "https://github.com/OscarRobertRodriguez/marvel-quiz#readme",
+  "dependencies": {
+    "gh-pages": "^2.0.1"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.10"
+  }
 }
