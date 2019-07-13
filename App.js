@@ -5,93 +5,32 @@ import "./css/card.css";
 import "./css/btn.css";
 import "./css/helper.css";
 
-import data from './assets/data.json';
-import  $  from './jquery.js';
-console.log(data);
+import data from "./assets/data.json";
+import $ from "./jquery.js";
 var quiz = {
-  score: 0,
-  questionBookmark: 0,
-  allQuestions: [
-    {
-      question:
-        "Prior to Tom Holland taking the role, how many actors have played Spider-Man on the big screen in the U.S.?",
-      choices: ["3", "1", "2", "4"],
-      correctAnswer: 2,
-      chosenAns: null
-    },
-    {
-      question: "What movie did Thanos first appear in?",
-      choices: [
-        "iron man 3",
-        "guardians of the galaxy vol. 1",
-        "The Avengers",
-        "Aquaman"
-      ],
-      correctAnswer: 2,
-      chosenAns: null
-    },
-    {
-      question:
-        "Aside from Stan Lee, which actor has appeared in the most MCU films?",
-      choices: [
-        "Robert Downey Jr.",
-        "Chris Evans",
-        "Scarlett Johansson",
-        "Samuel L. Jackson"
-      ],
-      correctAnswer: 0,
-      chosenAns: null
-    },
-    {
-      question:
-        "In Guardians of the Galaxy, what is the name of the dog in the Collector Taneleer Tivan's museum?",
-      choices: ["Bevo", "Charlie", "Wattson", "Cosmo The SpaceDog"],
-      correctAnswer: 3,
-      chosenAns: null
-    },
-    {
-      question: "How many versions of the Iron Man armor has Tony Stark made?",
-      choices: ["5", "50", "2", "25"],
-      correctAnswer: 1,
-      chosenAns: null
-    },
-    {
-      question:
-        "How many Infinity Stones are there in the MCU and what color are they?",
-      choices: ["6", "4", "7", "10"],
-      correctAnswer: 0,
-      chosenAns: null
-    }
-  ],
-
   nextQuestion() {
-    var back = document.querySelector(".btn--back");
     if (this.isOneRadioChecked()) {
       var checkedRadio = document.querySelector(
         'input[type="radio"]:checked + p'
       ).textContent;
 
-      this.checkAnswer(this.questionBookmark, checkedRadio);
-      this.questionBookmark += 1;
+      this.checkAnswer(data.questionBookmark, checkedRadio);
+      data.questionBookmark += 1;
 
-      if (this.questionBookmark > 0) {
-        back.classList.remove("displayNone");
-      } else {
-        back.classList.add("displayNone");
-      }
+      this.removeBackBtn();
     }
   },
 
   checkAnswer(index, radioValue) {
-    var correctAns = this.allQuestions[index].correctAnswer;
-    var stringCorrect = this.allQuestions[index].choices[
+    var correctAns = data.allQuestions[index].correctAnswer;
+    var stringCorrect = data.allQuestions[index].choices[
       correctAns
     ].toLowerCase();
     this.storeChosenAnswer(index, radioValue);
     if (stringCorrect == radioValue.toLowerCase()) {
-      this.score += 100;
-    } else if (this.score >= 100) {
-      this.score -= 100;
+      data.score += 100;
+    } else if (data.score >= 100) {
+      data.score -= 100;
     }
   },
   validateRadios() {
@@ -103,6 +42,14 @@ var quiz = {
       message.classList.add("displayNone");
     }
   },
+  removeBackBtn() {
+    var back = document.querySelector(".btn--back");
+    if (data.questionBookmark > 0) {
+      back.classList.remove("displayNone");
+    } else {
+      back.classList.add("displayNone");
+    }
+  },
   isOneRadioChecked() {
     var radios = document.getElementsByName("group1");
     var isOneRadioChecked = [...radios].some(radio => {
@@ -111,11 +58,10 @@ var quiz = {
     return isOneRadioChecked;
   },
   storeChosenAnswer(index, value) {
-    var questionObj = this.allQuestions[index];
+    var questionObj = data.allQuestions[index];
     var position = questionObj.choices.findIndex(choice => {
       return choice == value;
     });
-    console.log(position, "position");
     questionObj.chosenAns = position;
   }
 };
@@ -126,57 +72,59 @@ export var handlers = {
   },
   nextQuestion() {
     quiz.validateRadios();
-    quiz.nextQuestion();
-    view.displayNewQuestion();
+    if (quiz.isOneRadioChecked()) {
+      quiz.nextQuestion();
+      view.displayNewQuestion();
+    }
   },
   validateRadios() {
     quiz.validateRadios();
   },
   goBack() {
-    quiz.questionBookmark -= 1;
+    data.questionBookmark -= 1;
 
-    console.log("question", quiz.questionBookmark);
     view.displayNewQuestion();
-    view.checkRadioFromPrevious();
+    setTimeout(() => {
+      view.checkRadioFromPrevious();
+    }, 500);
   }
 };
 
 var view = {
   hideStartCard() {
-    var cover = $('.cover');
+    var cover = $(".cover");
     cover.fadeOut(500);
   },
   displayNewQuestion() {
-    var questionP = $('#card__question');
+    var questionP = $("#card__question");
     var paragraphs = $('input[type="radio"] + p');
-    var labels = $('.label__container').children();
-    var questionObj = quiz.allQuestions[quiz.questionBookmark];
-    var index = 0; 
-    if (quiz.questionBookmark == 6) {
+    var labels = $(".label__container").children();
+    var questionObj = data.allQuestions[data.questionBookmark];
+    if (data.questionBookmark == 6) {
       this.showFinalScore();
     } else {
+      quiz.removeBackBtn();
 
-      if(quiz.isOneRadioChecked()) {
-
-        this.unCheckRadiosOnNext();
+      this.unCheckRadiosOnNext();
       questionP.fadeOut(function() {
-        $(this).text(questionObj.question).fadeIn();
+        $(this)
+          .text(questionObj.question)
+          .fadeIn();
       });
-      
+
       setTimeout(function() {
-      [...paragraphs].forEach((item, index) => {
+        [...paragraphs].forEach((item, index) => {
           item.innerHTML = questionObj.choices[index];
-      });
-    }, 500); 
+        });
+      }, 500);
 
-
-      setTimeout( function run () {
+      setTimeout(function run() {
         labels.slideUp().fadeIn();
-        paragraphs.fadeOut().delay(100).fadeIn();
+        paragraphs
+          .fadeOut()
+          .delay(100)
+          .fadeIn();
       }, 0);
-    
-    }
-      
     }
   },
   unCheckRadiosOnNext() {
@@ -199,16 +147,16 @@ var view = {
     btns.forEach(btn => {
       btn.classList.add("displayNone");
     });
-    score.textContent = `${quiz.score}pts / 600pts`;
+    score.textContent = `${data.score}pts / 600pts`;
     message.textContent =
-      quiz.score == 600
+      data.score == 600
         ? "you found all the infinity stones"
         : "your missing some infinity stones. Maybe next time.";
   },
   checkRadioFromPrevious() {
-    var questionObj = quiz.allQuestions[quiz.questionBookmark];
-    var chosenAns = questionObj.chosenAns;
+    var questionObj = data.allQuestions[data.questionBookmark];
+    var chosenAnswer = questionObj.chosenAns;
     var radios = document.querySelectorAll('input[type="radio"]');
-    radios[chosenAns].checked = true;
+    radios[chosenAnswer].checked = true;
   }
 };
