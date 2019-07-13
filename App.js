@@ -5,49 +5,19 @@ import "./css/card.css";
 import "./css/btn.css";
 import "./css/helper.css";
 
-import data from "./assets/data.json";
 import $ from "./jquery.js";
+import data from "./assets/data.json";
+
 var quiz = {
-  nextQuestion() {
-    if (this.isOneRadioChecked()) {
-      var checkedRadio = document.querySelector(
-        'input[type="radio"]:checked + p'
-      ).textContent;
-
-      this.checkAnswer(data.questionBookmark, checkedRadio);
-      data.questionBookmark += 1;
-
-      this.removeBackBtn();
-    }
-  },
-
-  checkAnswer(index, radioValue) {
-    var correctAns = data.allQuestions[index].correctAnswer;
-    var stringCorrect = data.allQuestions[index].choices[
-      correctAns
-    ].toLowerCase();
-    this.storeChosenAnswer(index, radioValue);
-    if (stringCorrect == radioValue.toLowerCase()) {
-      data.score += 100;
-    } else if (data.score >= 100) {
-      data.score -= 100;
-    }
-  },
   validateRadios() {
     var message = document.querySelector(".uncheck-radios__message");
     if (this.isOneRadioChecked() == false) {
       message.classList.remove("displayNone");
+      return false;
     }
     if (this.isOneRadioChecked()) {
       message.classList.add("displayNone");
-    }
-  },
-  removeBackBtn() {
-    var back = document.querySelector(".btn--back");
-    if (data.questionBookmark > 0) {
-      back.classList.remove("displayNone");
-    } else {
-      back.classList.add("displayNone");
+      return true;
     }
   },
   isOneRadioChecked() {
@@ -57,12 +27,36 @@ var quiz = {
     });
     return isOneRadioChecked;
   },
-  storeChosenAnswer(index, value) {
-    var questionObj = data.allQuestions[index];
-    var position = questionObj.choices.findIndex(choice => {
-      return choice == value;
-    });
-    questionObj.chosenAns = position;
+  nextQuestion() {
+    if (this.isOneRadioChecked()) {
+      var radios = document.querySelectorAll('input[type="radio"]');
+      var radioIndex = [...radios].findIndex(radio => radio.checked);
+
+      this.checkAnswer(radioIndex);
+      data.questionBookmark += 1;
+    }
+  },
+  checkAnswer(radioIndex) {
+    var correctAns = data.allQuestions[data.questionBookmark].correctAnswer;
+    this.storeChosenAnswer(radioIndex);
+    if (correctAns == radioIndex) {
+      data.score += 100;
+      console.log("TCL: checkAnswer -> data.score", data.score);
+    }
+  },
+  storeChosenAnswer(value) {
+    data.allQuestions[data.questionBookmark].chosenAns = value;
+  },
+  checkRadioFromPrevious() {
+    var questionObj = data.allQuestions[data.questionBookmark];
+    var chosenAnswer = questionObj.chosenAns;
+    var radios = document.querySelectorAll('input[type="radio"]');
+    if (chosenAnswer != null) {
+      radios[chosenAnswer].checked = true;
+    }
+  },
+  subtractScoreOnBack() {
+    data.score -= 100;
   }
 };
 
@@ -71,29 +65,33 @@ export var handlers = {
     view.hideStartCard();
   },
   nextQuestion() {
-    quiz.validateRadios();
-    if (quiz.isOneRadioChecked()) {
+    if (quiz.validateRadios()) {
       quiz.nextQuestion();
+      view.removeBackBtn();
       view.displayNewQuestion();
+      if (data.questionBookmark < 6) {
+        quiz.checkRadioFromPrevious();
+      }
     }
-  },
-  validateRadios() {
-    quiz.validateRadios();
   },
   goBack() {
     data.questionBookmark -= 1;
-
+    quiz.subtractScoreOnBack();
+    view.removeBackBtn();
     view.displayNewQuestion();
-    setTimeout(() => {
-      view.checkRadioFromPrevious();
-    }, 500);
+    quiz.checkRadioFromPrevious();
   }
 };
 
 var view = {
   hideStartCard() {
-    var cover = $(".cover");
-    cover.fadeOut(500);
+    $(".cover").fadeOut(500);
+  },
+  removeBackBtn() {
+    var back = document.querySelector(".btn--back");
+    data.questionBookmark > 0
+      ? back.classList.remove("displayNone")
+      : back.classList.add("displayNone");
   },
   displayNewQuestion() {
     var questionP = $("#card__question");
@@ -103,8 +101,6 @@ var view = {
     if (data.questionBookmark == 6) {
       this.showFinalScore();
     } else {
-      quiz.removeBackBtn();
-
       this.unCheckRadiosOnNext();
       questionP.fadeOut(function() {
         $(this)
@@ -152,11 +148,5 @@ var view = {
       data.score == 600
         ? "you found all the infinity stones"
         : "your missing some infinity stones. Maybe next time.";
-  },
-  checkRadioFromPrevious() {
-    var questionObj = data.allQuestions[data.questionBookmark];
-    var chosenAnswer = questionObj.chosenAns;
-    var radios = document.querySelectorAll('input[type="radio"]');
-    radios[chosenAnswer].checked = true;
   }
 };
