@@ -194,6 +194,7 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 1.2em;
+  text-transform: capitalize;
 }
 
 .btn:hover {
@@ -203,6 +204,29 @@ body {
 
 .btn--back {
   align-self: end;
+}
+
+.btn__container {
+  grid-column: 1/-1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  justify-content: space-around;
+  height: 100%;
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .btn__container {
+    flex-direction: column;
+    justify-content: space-evenly;
+    justify-items: end;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+  }
 }
 
 .displayNone {
